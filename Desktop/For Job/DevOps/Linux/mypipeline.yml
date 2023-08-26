@@ -1,0 +1,57 @@
+# Define variables
+variables:
+  buildConfiguration: 'Release'
+  vmImageName: 'ubuntu-latest'
+
+# Trigger the pipeline whenever code is pushed to the main branch
+trigger:
+- main
+
+# Define the VM image to use
+pool:
+  vmImage: $(vmImageName)
+
+# Define the pipeline steps
+steps:
+- checkout: self  # Checkout code from the repository
+
+- task: Maven@3  # Compile and build the project using Maven
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'compile'
+  displayName: 'Compile Code'
+  env:
+    MY_ENV_VAR: 'CompileValue'
+
+- script: mvn test  # Run unit tests
+  displayName: 'Run Unit Tests'
+  condition: succeeded()
+
+- task: Maven@3  # Run automation tests
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'verify'
+  displayName: 'Run Automation Tests'
+  condition: succeeded()
+
+- task: Maven@3  # Package the application
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'package'
+  displayName: 'Package Application'
+  condition: succeeded()
+
+- task: CopyFiles@2  # Copy the packaged files to staging directory
+  inputs:
+    SourceFolder: 'target'
+    Contents: '**/*.jar'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  condition: succeeded()
+
+- task: PublishBuildArtifacts@1  # Publish build artifacts
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'myApp'
+  condition: succeeded()
+
+
