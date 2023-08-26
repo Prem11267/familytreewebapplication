@@ -9,7 +9,7 @@ trigger:
 
 # Define the VM image to use
 pool:
-  name: agentthepool
+  name: agent1
 
 # Define the pipeline steps
 steps:
