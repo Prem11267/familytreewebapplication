@@ -5,11 +5,11 @@ variables:
 
 # Trigger the pipeline whenever code is pushed to the main branch
 trigger:
-- main
+- master  # Change this to your primary branch name if it's not 'master'
 
 # Define the VM image to use
 pool:
-  name: agent1
+  name: 'agentthepool'  # Make sure this agent pool exists in your Azure DevOps
 
 # Define the pipeline steps
 steps:
@@ -53,5 +53,3 @@ steps:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'myApp'
   condition: succeeded()
-
-
