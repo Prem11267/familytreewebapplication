@@ -8,7 +8,7 @@ variables:
 
 # Define the VM image to use (Microsoft-hosted Ubuntu agent)
 pool:
-  name: 'agent1'
+  vmImage: 'ubuntu-latest'
 
 steps:
 - checkout: self  # Checkout code from the repository
