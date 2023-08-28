@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Family Tree</title>
+	<meta name="keywords" content="" />
+	<meta name="Premium Series" content="" />
+	
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+		crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}">
+	<script>
+		setTimeout(function () {
+			$('#successMessage').fadeOut('fast');
+		}, 5000);
+		function validate(formObj) {
+			if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(formObj.emailAddr.value)) {
+				return (true)
+			}
+			alert("You have entered an invalid email address!")
+			return (false)
+		}
+	</script>
+</head>
+<header>
+	<style>
+		.logintable {
+			align: right;
+			margin-left: auto;
+			< !-- margin-right: auto;
+			-->
+		}
+	</style>
+</header>
+
+<body>
+	<!--	This is for Flash messages-->
+	<div class="msg" id="successMessage">
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<ul class=flashes>
+			{% for message in messages %}
+			<div class="alert alert-primary" role="alert">
+				<li>{{ message }}</li>
+			</div>
+
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	</div>
+	<!-- start header -->
+	<div id="header">
+		<div id="logo">
+			<h1><span>
+					<center>Family Tree
+
+					</center>
+				</span></h1>
+				<span>
+					<h1 class="username">{{uname}}</h1>
+				</span>
+		</div>
+
+		<div id="menu">
+			<ul id="main">
+				<li class="current_page_item"><a href="index">Home</a></li>
+				<td></td>
+				<li><a href="DefineRelation">Define Relation</a></li>
+				<td></td>
+				<li><a href="ViewTree">View Tree</a></li>
+				<td></td>
+				<li><a href="SearchTree">Search Tree</a></li>
+				<td></td>
+			</ul>
+			<ul class="logintable">
+				<table>
+					<tr>
+						{% if session.logged_in %}
+						<td>
+							<button type="button" class="btn btn-primary"
+								onclick="window.location.href='{{ url_for('logout') }}';">Logout </button>
+						</td>
+						{% else %}
+						<td>
+							<button type="button" class="btn btn-primary"
+								onclick="window.location.href='{{ url_for('register_page') }}';">SignUp </button>
+						</td>
+						<td>
+							<button type="button" class="btn btn-primary"
+								onclick="window.location.href='{{ url_for('login') }}';">LogIn </button>
+						</td>
+						{% endif %}
+					</tr>
+				</table>
+			</ul>
+		</div>
+
+	</div>
+	<div id="wrapper">
+		<!-- start page -->
+		<div id="page">
+			<div class="user_invite">
+				<!-- <label>Invite user : </label>  -->
+				<form name="frm" method="post" action="/shareTree" enctype="multipart/form-data"
+					onsubmit="return validate(this);">
+					<input type="email" name="emailAddr" size="30" placeholder="User Email" />
+					<button class="btn btn-primary" type="submit" value="Submit">Share Tree</button>
+				</form>
+
+				</td>
+			</div>
+			<!-- <div class="msg" id="successMessage">
+
+		{% for mesg in get_flashed_messages() %}
+		<font size="3" color="red">
+		<center>{{ mesg }}</center>
+	</font>
+		{% endfor %}
+	</div> -->
+			<!-- start content -->
+			<div id="content">
+				<div class="flower">
+					<center><img src="{{ url_for('static', filename='tra.jpg') }}" alt="" width="660" height="300" />
+					</center>
+				</div>
+				<br /><br />
+				<center>
+
+					<table align="center">
+						<tr>
+							<h3>
+								</p>
+							</h3>
+					</table>
+				</center><br />
+				<div class="post">
+
+					<div class="entry">
+
+					</div>
+				</div>
+			</div>
+			<!-- end content -->
+			<!-- start sidebars -->
+
+			<!-- end sidebars -->
+
+			<div style="clear: both;">&nbsp;</div>
+		</div>
+		<!-- end page -->
+	</div>
+</body>
+
+</html>

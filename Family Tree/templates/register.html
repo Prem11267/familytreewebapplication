@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Register</title>
+<meta name="keywords" content="" />
+<meta name="Premium Series" content="" />
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</head>
+
+<header>
+  <style>
+    .logintable {
+  margin-left: auto;
+  margin-right: auto;
+}
+  </style>
+</header>
+
+<body>
+<!-- start header -->
+<div id="header">
+    <br>
+    <br>
+	<div id="logo">
+		<h1><span><center>Family Tree
+</center></span></h1>
+
+	</div>
+
+	</div>
+<!--	This is for Flash messages-->
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+
+<div id="wrapper">
+	<!-- start page -->
+	<div id="page">
+		<!-- start content -->
+		<div id="menu">
+		<ul id="main">
+			<li class="current_page_item"><a href="{{ url_for('index') }}">Home</a></li><td></td>
+		</ul>
+		</div>
+		<center>
+        <h4>Register</h4>
+        <br>
+		{% from "_formhelpers.html" import render_field %}
+
+		<form method=post action="/register/" >
+			<dl>
+				{{ render_field(form.username) }}
+				{{ render_field(form.email) }}
+				{{ render_field(form.password) }}
+				{{ render_field(form.confirm) }}
+			</dl>
+			<p><input type="submit" value="SignUp"/></p>
+		</form>
+		{% if error %}
+	    <p class="error"> <strong> Error: {{error}} </strong> </p>
+		{% endif %}
+	</center>
+    </div>
+
+	</div>
+</div>
+</body>
+</html>
+
+

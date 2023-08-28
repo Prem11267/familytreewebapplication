@@ -1,0 +1,399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     <!-- DOCTYPE to specify what type of file the browser is expecting -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>FamilyTree</title>
+	<meta name="keywords" content="" />
+	<meta name="Premium Series" content="" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}">
+	<script language="javascript" type="text/javascript" src="{{ url_for('static', filename='datetimepicker.js') }}">
+
+	</script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script language="javascript">
+		var rels = []
+		$.ajax({
+			url: "/getRelationData",
+			type: 'GET',
+			dataType: 'json',
+			success: function(res) {
+				console.log(res);
+				rels = res
+			}
+		});
+		setTimeout(function() {
+			$('#successMessage').fadeOut('fast');
+		}, 5000);
+
+		var hof = JSON.parse('{{ hof|tojson|safe }}')
+		console.log(hof)
+		
+		function validate(formObj) {
+			if (formObj.t1.value.length == 0 || formObj.t7.value.length == 0) {
+				alert("Please Enter first name and last name");
+				formObj.t1.focus();
+				return false;
+			}
+			if (formObj.t2.value.length == 0) {
+				alert("Please Enter relation");
+				formObj.t2.focus();
+				return false;
+			}
+			if (formObj.t3.value.length == 0) {
+				alert("Please choose birth date");
+				formObj.t3.focus();
+				return false;
+			}
+			if (formObj.t4.value.length == 0) {
+				alert("Please choose death date");
+				formObj.t4.focus();
+				return false;
+			}
+			if (formObj.t5.value.length == 0) {
+				alert("Please upload image");
+				formObj.t5.focus();
+				return false;
+			}
+			if (formObj.t6.value == "none" && hof == "False") {
+				alert("Please Select Relation Type");
+				formObj.t6.focus();
+				return false;
+			}
+			if (formObj.t6.value == "c" ) {
+				if(formObj.father.value  == "none" || formObj.mother.value == "none"){
+					alert("Please Select Father And Mother ");
+					return false;
+				}
+			}
+			if (  formObj.t6.value == "p" ) {
+				if(formObj.t2.value == 'f' && formObj.father.value  == "none"  ){
+					alert("Please Select Husband ");
+					return false;
+				}
+				if(formObj.t2.value == 'm' && formObj.mother.value == "none") {
+					alert("Please Select Wife");
+					return false;
+				}
+			}
+			if(hof == "False") {
+				var gen = formObj.t2.value;
+				var r = formObj.t6.value;
+				var fid = formObj.father.value;
+				var mid = formObj.mother.value;
+
+				if(r == 'c') {
+					var md = rels.find(x => x.id == fid)
+					if(md.pid != mid) {
+						alert("Please Select Correct Father and Mother");
+						return false;
+					}
+				}
+				if(r == 'p') {
+					if(gen == 'f'){
+						partnerID = fid
+					}
+					if(gen == 'm'){
+						partnerID = mid
+					}
+					var md = rels.find(x => x.id == partnerID)
+					if(md.pid != 0) {
+						alert(`Partner is already assigned for selected ${gen == 'f' ? 'Husband' : 'Wife'}`);
+						return false;
+					}
+				}
+				if(r == 'f') {
+					if(fid != "none" && mid != "none") {
+						alert(`Select either son or daughter`);
+						return false;
+					}
+					var cid;
+					if(fid != "none" ) cid = fid; else cid = mid
+					var md = rels.find(x => x.id == cid)
+					if(md.fid != 0) {
+						alert(`Father is alerdy assidgned for the child`);
+						return false;
+					}
+				}
+
+			}
+			//formObj.actionUpdateData.value = "update";
+			return true;
+		}
+
+
+		function relationchange() {
+			var s = document.getElementById("gender").value;
+			var r = document.getElementById("relation").value;
+			document.getElementById('father').value = 'none';
+			document.getElementById('mother').value = 'none';
+			if (s == "none" || r == "none") {
+				document.getElementsByClassName('female')[0].style.visibility = 'visible';
+				document.getElementsByClassName('male')[0].style.visibility = 'visible';
+				document.getElementById('m_partner').innerHTML = 'Father:';
+				document.getElementById('f_partner').innerHTML = 'Mother:';
+				return;
+			}
+			if (r == 'p') {
+				if (s == 'f') {
+					document.getElementsByClassName('female')[0].style.visibility = 'hidden';
+					document.getElementById('m_partner').innerHTML = 'Husband:';
+					document.getElementsByClassName('male')[0].style.visibility = 'visible';
+
+				} else if (s == 'm') {
+					document.getElementsByClassName('male')[0].style.visibility = 'hidden';
+					document.getElementById('f_partner').innerHTML = 'Wife:';
+					document.getElementsByClassName('female')[0].style.visibility = 'visible';
+				}
+			} else if (r == 'c') {
+				document.getElementsByClassName('female')[0].style.visibility = 'visible';
+				document.getElementsByClassName('male')[0].style.visibility = 'visible';
+				document.getElementById('m_partner').innerHTML = 'Father:';
+				document.getElementById('f_partner').innerHTML = 'Mother:';
+			} else if (r == 'f') {
+				document.getElementById("gender").value = 'm'
+				document.getElementsByClassName('female')[0].style.visibility = 'visible';
+				document.getElementsByClassName('male')[0].style.visibility = 'visible';
+				document.getElementById('m_partner').innerHTML = 'Son:';
+				document.getElementById('f_partner').innerHTML = 'Daughter:';
+			}
+		}
+	</script>
+
+	<script src="{{ url_for('static', filename='countrystatecity.js') }}"></script>
+
+</head>
+
+<body>
+	<!-- start header -->
+	<div id="header">
+		<div id="logo"  class="logo2">
+			<h1><span>
+					<center>Family Tree
+
+					</center>
+				</span></h1>
+				<span>
+					<h1 class="username">{{uname}}</h1>
+				</span>
+		</div>
+		<div id="menu">
+			<ul id="main">
+				<li class="current_page_item"><a href="index">Home</a></li>
+				<td></td>
+				<li><a href="DefineRelation">DefineRelation</a></li>
+				<td></td>
+				<li><a href="ViewTree">ViewTree</a></li>
+				<td></td>
+				<li><a href="SearchTree">SearchTree</a></li>
+				<td></td>
+				<td></td>
+
+
+			</ul>
+
+		</div>
+
+	</div>
+
+	<div id="wrapper">
+		<!-- start page -->
+		<div id="page2">
+			<form name="frm" method="post" action="/DefineAction" enctype="multipart/form-data"
+				onsubmit="return validate(this);">
+				<!-- start content -->
+				<div id="content">
+					<div>
+						<center>
+							<h1>Enter Family Details</h1>
+						</center>
+					</div>
+					<br />
+					<div class="msg" id="successMessage">
+						<!-- <font size="3" color="red">
+							<center>{{ msg }}</center>
+						</font> -->
+						{% for mesg in get_flashed_messages() %}
+						<font size="3" color="red">
+						<center>{{ mesg }}</center>
+					</font>
+						{% endfor %}
+					</div>
+
+					<br />
+
+
+					<table align="center">
+						<tr>
+							<td>
+								<font size="3" color="black">First Name</font>
+							 </td>
+							<td><input type="text" name="t1" size="20" /></td>
+						</tr>
+						<tr>
+							<td>
+								<font size="3" color="black">Last Name</font>
+							</td>
+							<td><input type="text" name="t7" size="20" /></td>
+						</tr>
+						<!--<tr><td><font size="3" color="black">gender</td><td><input type="text" name="t2" size="20"/> </td></tr>-->
+						<tr>
+							<td>
+								<font size="3" color="black">
+									<label for="gender">Gender</label></font>
+							</td>
+							<td> <select name="t2" id="gender" onchange="relationchange();">
+									<!-- <option value="none">None</option> -->
+									<option value="m">Male</option>
+									<option value="f">Female</option>
+								</select> </td>
+						</tr>
+						<tr>
+							<td>
+								<font size="3" color="black">
+
+									<label for="relation">Relationship </label></font>
+							 </td>
+							<td> <select name="t6" id="relation" onchange="relationchange();">
+									<option value="none">None</option>
+									<option value="p">Partner</option>
+									<option value="c">Child</option>
+									<option value="f">Father</option>
+								</select> </td>
+						</tr>
+						<tr class="male">
+							<td>
+								<font size="3" color="black">
+									<label id="m_partner">Father</label></font>
+							</td>
+							<td> <select name="father" id="father">
+									<option value="none">None</option>
+									{% for each in fathers %}
+									<option value={{each[0]}}> {{ each[1] }} {{each[2]}} </option>
+									{%endfor %}
+								</select>
+							</td>
+						</tr>
+						<tr class="female">
+							<td>
+								<font size="3" color="black">
+									<label id="f_partner">Mother</label></font>
+							</td>
+							<td> <select name="mother" id="mother">
+									<option value="none">None</option>
+									{% for each in mothers %}
+									<option value={{each[0]}}> {{ each[1] }}  {{each[2]}}</option>
+									{% endfor %}
+								</select>
+							</td>
+						</tr>
+						
+
+
+						<tr>
+							<td>
+								<font size="3" color="black">Birth Date</font>
+							</td>
+							<td><input name="t3" type="Text" id="demo1" maxlength="25" size="20" class="c2"><a
+									href="javascript:NewCal('demo1','ddmmmyyyy',false,24)"><img
+										src="{{ url_for('static', filename='images/cal.gif') }}" width="16" height="16"
+										border="0" alt="Pick a date"></a>
+								<span class="descriptions"></span>
+							</td>
+						</tr>
+						<tr>
+      							<td><label ><font size="3" color="black">Birth Country </font></label></td>
+								<td>
+      								<select name="bcountry" class="countries form-control" id="countryId">
+    									<option value="">Select Birth Country</option>
+									</select>
+								</td>
+						</tr>
+<!--
+						<tr>
+      							<td><label ><font size="3" color="black">Birth State/provinance:</font></label></td>
+								<td>
+      								<select name="bstate" class="states form-control" id="stateId">
+    									<option value="">Select Birth State</option>
+									</select>
+								</td>
+						</tr>
+
+--->
+						<tr>
+      							<td><label ><font size="3" color="black">Birth City </font></label></td>
+								<td>
+      								<select name="bcity" class="cities form-control" id="cityId">
+									  <option value="">Select Birth City</option>
+									</select>
+
+								</td>
+						</tr>
+
+						<tr>
+      							<td><label ><font size="3" color="black">Birth Address:</font></label></td>
+								<td>
+      								<textarea name="baddress" id="b_address" rows="4" cols="30"> </textarea>
+								</td>
+						</tr>
+
+						<tr>
+								<td><label for="marital_status"><font size="3" color="black"> Marital Status:</font></label></td>
+								<td>
+									<select id="marital_status" name="marital_status">
+										<option value="married">Married</option>
+										<option value="unmarried" selected="selected">UnMarried</option>
+									</select>
+								</td>
+						</tr>
+
+
+						<tr>
+							<td>
+								<font size="3" color="black">Deceased</font>
+							 </td>
+							<td><input name="t4" type="Text" id="demo1" maxlength="25" size="20" class="c2" value="-"><a
+									href="javascript:NewCal('demo1','ddmmyyyy',false,24)"><img
+										src="{{ url_for('static', filename='images/cal.gif') }}" width="16" height="16"
+										border="0" alt="Pick a date"></a>
+								<span class="descriptions"></span>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<font size="3" color="black">Upload&nbsp;Image</font>
+							</td>
+							<td><input type="file" name="t5" size="20" /></td>
+						</tr>
+
+
+						<tr>
+							<td></td>
+							<td><input type="submit" value="Submit"></td>
+							</td>
+						</tr>
+					</table>
+			</form>
+			</table>
+			</center><br />
+			<div class="post">
+
+				<div class="entry">
+
+				</div>
+			</div>
+		</div>
+		<!-- end content -->
+		<!-- start sidebars -->
+
+		<!-- end sidebars -->
+		<div style="clear: both;">&nbsp;</div>
+	</div>
+	<!-- end page -->
+	</div>
+</body>
+
+</html>

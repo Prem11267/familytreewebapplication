@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Family Tree </title>
+    <style id="myStyles">
+        html,
+        body {
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+            height: 100%;
+            font-family: Helvetica;
+            overflow: hidden;
+        }
+
+
+        #tree {
+            overflow: hidden;
+            position: relative;
+            height: 70%;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}">
+    
+    <script>
+
+        var treeid = JSON.parse('{{ treeid|tojson|safe }}')
+		console.log(treeid)
+
+      
+
+
+    </script>
+
+</head>
+
+<body>
+    <script src="https://balkan.app/js/FamilyTree.js"></script>
+
+    <div id="header">
+        <div id="logo" class="logo2">
+            <h1><span>
+                    <center>Family Tree
+
+                    </center>
+                </span></h1>
+                <span>
+                    <h1 class="username">{{uname}}</h1>
+                </span>
+        </div>
+        <div id="menu">
+            <ul id="main">
+                <li class="current_page_item"><a href="/index">Home</a></li>
+                <td></td>
+                <li><a href="/DefineRelation">DefineRelation</a></li>
+                <td></td>
+                <li><a href="/ViewTree">ViewTree</a></li>
+                <td></td>
+                <li><a href="/SearchTree">SearchTree</a></li>
+                <td></td>
+                <form name="frm" method="post" action="/getTree" enctype="multipart/form-data"
+                    onsubmit="return validate(this);">
+                    <li> 
+                        <select class="tree_drop" name="tree" id="drop_trees">
+                            {% for each in trees %}
+                            <option value="{{each[1]}}" {% if each[2]  == 'True' %} selected{% endif %}> {{ each[0] }} Tree </option>
+                            {%endfor %}
+                        </select>
+                    </li>
+                    <td></td>
+                    <li>
+                        <button class="btn btn-primary tree_sub" type="submit" value="Submit">View Tree</button>
+                    </li>
+                </form>
+
+
+            </ul>
+
+        </div>
+
+    </div>
+    <div class="conte1">
+        <!-- https://balkan.app/OrgChartJS/Demos/RoyalFamilyTree -->
+        <!-- https://balkan.app/FamilyTreeJS -->
+        <div id="tree"></div>
+    </div>
+    <!-- <div id ="tree"></div> -->
+
+
+    <script>
+
+        window.onload = function () {
+            FamilyTree.templates.family_template = Object.assign({}, FamilyTree.templates.tommy);
+            FamilyTree.templates.family_template.size = [86, 86];
+            FamilyTree.templates.family_template.rippleRadius = 90;
+            FamilyTree.templates.family_template.name = '<text style="font-size: 16px;" fill="#000" x="43" y="100" text-anchor="middle">{val}</text>';
+            FamilyTree.templates.family_template.title = '<text style="font-size: 16px;" fill="#aeaeae" x="43" y="115" text-anchor="middle">{val}</text>';
+            FamilyTree.templates.family_template.img = '<clipPath id="{randId}"><rect width="85" height="85"></rect></clipPath></rect><image preserveAspectRatio="xMidYMid slice" clip-path="url(#{randId})" xlink:href="{val}" x="3" y="3"  width="80" height="80"></image>';
+            FamilyTree.templates.family_template.node = '<rect width="85" height="85" fill="none" stroke="#aeaeae" ></rect>';
+
+
+            var family = new FamilyTree(document.getElementById("tree"), {
+                mouseScrool: FamilyTree.action.scroll,
+                showYScroll: FamilyTree.scroll.visible,
+                showXScroll: FamilyTree.scroll.visible,
+                nodeMouseClick: FamilyTree.action.none,
+                template: "family_template",
+                enableSearch: false,
+                siblingSeparation: 100,
+                nodeBinding: {
+                    name: "name",
+                    title: "title",
+                    img: "img"
+                },
+            });
+
+            family.on('render-link', function (sender, args) {
+                if (args.cnode.ppid != undefined) {
+                    args.html += '<use xlink:href="#baby" x="' + args.p.xa + '" y="' + args.p.ya + '"/>';
+                }
+            });
+
+            var w = JSON.parse('{{ relations|tojson|safe }}')
+            
+                    family.load(w);
+        };
+    </script>
+</body>
+
+</html>

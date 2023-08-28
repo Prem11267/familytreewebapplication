@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     <!-- DOCTYPE to specify what type of file the browser is expecting -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Family Tree</title>
+	<meta name="keywords" content="" />
+	<meta name="Premium Series" content="" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}">
+	<script language="javascript" type="text/javascript" src="{{ url_for('static', filename='datetimepicker.js') }}">
+
+	</script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script language="javascript">
+
+
+		
+		function validate(formObj) {
+			if (formObj.t1.value.length == 0 || formObj.t7.value.length == 0) {
+				alert("Please Enter first name and last name");
+				formObj.t1.focus();
+				return false;
+			}
+			if (formObj.t3.value.length == 0) {
+				alert("Please choose birth date");
+				formObj.t3.focus();
+				return false;
+			}
+			if (formObj.t4.value.length == 0) {
+				alert("Please choose death date");
+				formObj.t4.focus();
+				return false;
+			}
+			// if (formObj.t5.value.length == 0) {
+			//	alert("Please upload image");
+			//	formObj.t5.focus();
+			//	return false;
+			//}
+			//formObj.actionUpdateData.value = "update";
+			return true;
+			
+		}
+	</script>
+</head>
+
+<body>
+	<!-- start header -->
+	<div id="header">
+		<div id="logo" class="logo2">
+			<h1><span>
+					<center>Family Tree
+
+					</center>
+				</span></h1>
+				<span>
+					<h1 class="username">{{uname}}</h1>
+				</span>
+
+		</div>
+		<div id="menu">
+			<ul id="main">
+				<li class="current_page_item"><a href="index">Home</a></li>
+				<td></td>
+				<li><a href="DefineRelation">DefineRelation</a></li>
+				<td></td>
+				<li><a href="ViewTree">ViewTree</a></li>
+				<td></td>
+				<li><a href="SearchTree">SearchTree</a></li>
+				<td></td>
+				<td></td>
+
+
+			</ul>
+
+		</div>
+
+	</div>
+
+	<div id="wrapper">
+		<!-- start page -->
+		<div id="page2">
+			<form name="frm" method="post" action="/EditAction" enctype="multipart/form-data"
+				onsubmit="return validate(this);">
+				<!-- start content -->
+				<div id="content">
+					<div>
+						<center>
+							<h1>Edit person Details</h1>
+					 </div>
+					<br />
+					<div class="msg" id="successMessage">
+						<!-- <font size="3" color="red">
+							<center>{{ msg }}</center>
+						</font> -->
+						{% for mesg in get_flashed_messages() %}
+						<font size="3" color="red">
+						<center>{{ mesg }}</center>
+					</font>
+						{% endfor %}
+					</div>
+
+					<br />
+
+
+					<table align="center">
+						<tr>
+							<td>
+								<font size="3" color="black">First Name
+							 </td>
+							<td><input type="text" name="t1" size="20" value="{{firstname}}" /></td>
+						</tr>
+						<tr>
+							<td>
+								<font size="3" color="black">Last Name
+							</td>
+							<td><input type="text" name="t7" size="20" value="{{lastname}}"/></td>
+						</tr>
+						<!--<tr><td><font size="3" color="black">gender</td><td><input type="text" name="t2" size="20"/> </td></tr>-->
+						
+						
+						
+						
+						
+
+
+						<tr>
+							<td>
+								<font size="3" color="black">Birth Date
+							</td>
+							<td><input name="t3" type="Text" id="demo1" maxlength="25" size="20" class="c2" value="{{birth}}"><a
+									href="javascript:NewCal('demo1','ddmmmyyyy',false,24)"><img
+										src="{{ url_for('static', filename='images/cal.gif') }}" width="16" height="16"
+										border="0" alt="Pick a date"></a>
+								<span class="descriptions"></span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<font size="3" color="black">Deceased
+							 </td>
+							<td><input name="t4" type="Text" id="demo2" maxlength="25" size="20" class="c2" value="{{death}}"><a
+									href="javascript:NewCal('demo2','ddmmyyyy',false,24)"><img
+										src="{{ url_for('static', filename='images/cal.gif') }}" width="16" height="16"
+										border="0" alt="Pick a date"></a>
+								<span class="descriptions"></span>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<font size="3" color="black">Upload&nbsp;Image
+							</td>
+							<td><input type="file" name="t5" size="20" /></td>
+						</tr>
+
+						
+						<tr>
+							<td><input type="hidden" name="t9" size="20" value="{{user}}" /></td>
+							<td><input type="submit" value="Submit"></td>
+							</td>
+						</tr>
+					</table>
+			</form>
+			</table>
+			</center><br />
+			<div class="post">
+
+				<div class="entry">
+
+				</div>
+			</div>
+		</div>
+		<!-- end content -->
+		<!-- start sidebars -->
+
+		<!-- end sidebars -->
+		<div style="clear: both;">&nbsp;</div>
+	</div>
+	<!-- end page -->
+	</div>
+</body>
+
+</html>
